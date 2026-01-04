@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/parsers/data_reader.py",
+        "./src/parsers"
+    ]
+}
