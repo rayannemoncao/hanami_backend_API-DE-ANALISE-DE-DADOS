@@ -67,6 +67,52 @@ Os arquivos passam por:
 
 ---
 
+## 🚀 Setup do Ambiente
+
+### 1️⃣ Clonar o repositório
+```bash
+git clone https://github.com/rayannemoncao/hanami_backend_API-DE-ANALISE-DE-DADOS
+cd hanami_backend_API-DE-ANALISE-DE-DADOS
+```
+
+## 2️⃣ Criar e ativar ambiente virtual (Python)
+```bash
+python -m venv venv
+```
+
+Ativar o ambiente virtual:
+- **Windows**
+```bash
+venv\Scripts\activate
+```
+
+- **Linux / macOS**
+```bash
+source venv/bin/activate
+```
+
+## 3️⃣ Configurar variáveis de ambiente
+```bash
+cp .env.example .env
+```
+Edite o arquivo .env conforme necessário (porta, modo de execução, caminhos de upload, etc.).
+
+## 4️⃣ Instalar dependências
+```bash
+pip install -r requirements.txt
+```
+
+## ▶️ Executando o Projeto
+```bash
+uvicorn main:app --reload
+```
+Após iniciar, a API estará disponível em:
+```bash
+http://localhost:<porta>
+```
+
+---
+
 ## 📊 Relatórios Analíticos
 
 Os relatórios gerados pela API incluem:
