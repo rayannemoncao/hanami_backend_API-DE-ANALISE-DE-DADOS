@@ -59,6 +59,7 @@ Desenvolver uma **API robusta** capaz de:
 A API aceita arquivos nos formatos:
 - `.csv`
 - `.xlsx`
+
 Os arquivos passam por:
 - Validação de tipo e tamanho
 - Padronização de dados
