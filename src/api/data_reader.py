@@ -78,18 +78,3 @@ def read_and_validate(file_path: str, columns):
     #retorna o dataframe limpo
 
     return df
-
-'''print("🚀 Script iniciado com sucesso")
-
-
-caminho_arquivo = "tests/vendas_ficticias_10000_linhas.csv"
-
-try:
-    df = read_and_validate(caminho_arquivo)
-    print("✅ Arquivo lido com sucesso!")
-    print(f"Total de linhas válidas: {len(df)}")
-    print("\nPrimeiras linhas dos dados:")
-    print(df.head())
-except Exception as e: 
-    print("❌ Erro ao processar o arquivo:")
-    print(e)'''
