@@ -5,6 +5,11 @@ from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 import tempfile
 import os
 import pandas as pd
+import logging 
+
+logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 # Função usada para ler o arquivo, validar e devolver dados confiáveis. Será usada em toda a API.
 def read_and_validate(file_path: str, columns):
@@ -13,11 +18,13 @@ def read_and_validate(file_path: str, columns):
     elif file_path.endswith(".xlsx"):
         df = pd.read_excel(file_path)
     else:
-        raise ValueError("Formato inválido. Envie um arquivo CSV ou XLSX.")
+        logger.error("Formato inválido. Envie um arquivo CSV ou XLSX.")
+        raise Exception("Formato inválido. Envie um arquivo CSV ou XLSX.")
 
     missing_columns = [col for col in columns if col not in df.columns]
     if missing_columns:
-        raise ValueError(f"O arquivo não contém todas as colunas obrigatórias:{missing_columns}")
+        logger.error(f"O arquivo não contém todas as colunas obrigatórias:{missing_columns}")
+        raise Exception(f"O arquivo não contém todas as colunas obrigatórias:{missing_columns}")
 
     numeric_columns = [
         "valor_final", "subtotal", "desconto_percent", "idade_cliente",
@@ -40,7 +47,7 @@ def read_and_validate(file_path: str, columns):
 
     return df
 
-print("Iniciando a API de Análise de Dados...")
+logger.info("Iniciando a API de Análise de Dados...")
 
 required_columns = [
     "id_transacao","data_venda","valor_final","subtotal","desconto_percent",
@@ -58,43 +65,37 @@ app = FastAPI(
 
 @app.get("/")
 def hello():
+    logger.info("Requisição recebida.")
     return {"message": "API de Análise de Dados está rodando!"}
+
 
 @app.middleware("http")
 async def log_request(request: Request, call_next):
-    print(f"Recebida requisição: {request.method} {request.url}")
+    logger.info(f"Recebida requisição: {request.method} {request.url}")
     response = await call_next(request)
     return response
-
-@app.post("/files/")
-async def create_file(file: UploadFile = File(...)):
-    if not file.filename:
-        raise HTTPException(status_code=400, detail="Arquivo não enviado.")
-    extensao = os.path.splitext(file.filename)[1].lower()
-    if extensao not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=400, detail="Tipo de arquivo não suportado. Envie um arquivo CSV ou XLSX.")
-    return {"filename": file.filename}
-
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-    return {"filename": file.filename}
 
 ALLOWED_EXTENSIONS = [".csv", ".xlsx"]
 
 @app.post("/upload")
 async def upload_arquivo(file: UploadFile):
-    print("Recebido arquivo:", file.filename)
+    logger.info(f"Recebido arquivo: {file.filename}")
     if not file.filename:
+        # Nenhum arquivo enviado → 400
+        logger.error("Arquivo não enviado.")
         raise HTTPException(status_code=400, detail="Arquivo não enviado.")
 
     extensao = os.path.splitext(file.filename)[1].lower()
     if extensao not in ALLOWED_EXTENSIONS:
+        # Tipo inválido → 400
+        logger.error("Tipo de arquivo não suportado. Envie um arquivo CSV ou XLSX.")
         raise HTTPException(status_code=400, detail="Tipo de arquivo não suportado. Envie um arquivo CSV ou XLSX.")
 
     content = await file.read()
+    logger.info(f"Tamanho do arquivo recebido: {len(content)} bytes")
     await file.close()
 
-    # ✅ Correção: usar TemporaryDirectory em vez de NamedTemporaryFile
+    # Usar TemporaryDirectory em vez de NamedTemporaryFile
     with tempfile.TemporaryDirectory() as tmpdir:
         temp_path = os.path.join(tmpdir, file.filename)
         with open(temp_path, "wb") as temp_file:
@@ -102,7 +103,7 @@ async def upload_arquivo(file: UploadFile):
 
         try:
             df = read_and_validate(temp_path, required_columns)
-            print(f"Arquivo processado: {file.filename}")
+            logger.info(f"Arquivo processado: {file.filename}")
             return {
                 "status": "sucesso",
                 "mensagem": "Arquivo processado com sucesso.",
@@ -110,5 +111,7 @@ async def upload_arquivo(file: UploadFile):
                 "colunas": list(df.columns)
             }
         except ValueError as e:
-            raise HTTPException(status_code=400, detail=f"Erro ao processar o arquivo: {str(e)}")
-        # não precisa remover manualmente, o diretório temporário é apagado automaticamente
+            # Arquivo inválido (ex.: colunas faltando) → 422
+            logger.error("Erro ao processar o arquivo.")
+            raise HTTPException(status_code=422, detail=f"Erro ao processar o arquivo: {str(e)}")
+        #não precisa remover manualmente, o diretório temporário é apagado automaticamente
