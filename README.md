@@ -39,18 +39,25 @@ Desenvolver uma **API robusta** capaz de:
 
 ```text
 .
+HANAMI/
+├── docs/                  # Documentação do projeto
+├── logs/                  # Logs da aplicação
 ├── src/
-│   ├── api/          # Endpoints e controllers
-│   ├── services/     # Regras de negócio e análises
-│   ├── parsers/      # Leitura e validação de CSV/XLSX
-│   ├── models/       # Estruturas de dados
-│   └── utils/        # Funções auxiliares
-├── docs/             # Documentação técnica e da API
-├── logs/             # Logs da aplicação
-├── tests/            # Testes automatizados
+│   ├── api/
+│   │   ├── main.py        # Ponto de entrada da API
+│   │   ├── data_reader.py # Leitura e validação de arquivos
+│   │   └── app.log        # Log da aplicação
+│   ├── models/            # Modelos de dados
+│   ├── parsers/           # Parsers e transformações
+│   ├── services/          # Regras de negócio
+│   └── utils/             # Funções utilitárias
+├── tests/
+│   ├── test_data_reader.py
+│   └── vendas_ficticias_10000_linhas.csv
+├── venv/                  # Ambiente virtual
 ├── .gitignore
-├── README.md
-└── .env.example
+└── README.md
+
 ```
 ---
 
@@ -67,15 +74,22 @@ Os arquivos passam por:
 
 ---
 
+## 🐍 Pré-requisitos
+
+- Python 3.10 ou superior  
+- Git
+
+---
+
 ## 🚀 Setup do Ambiente
 
 ### 1️⃣ Clonar o repositório
 ```bash
 git clone https://github.com/rayannemoncao/hanami_backend_API-DE-ANALISE-DE-DADOS
-cd hanami_backend_API-DE-ANALISE-DE-DADOS
+cd HANAMI
 ```
 
-## 2️⃣ Criar e ativar ambiente virtual (Python)
+### 2️⃣ Criar e ativar ambiente virtual (Python)
 ```bash
 python -m venv venv
 ```
@@ -91,83 +105,41 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-## 3️⃣ Configurar variáveis de ambiente
+### 4️⃣ Instalar dependências
 ```bash
-cp .env.example .env
-```
-Edite o arquivo .env conforme necessário (porta, modo de execução, caminhos de upload, etc.).
-
-## 4️⃣ Instalar dependências
-```bash
-pip install -r requirements.txt
+pip install fastapi uvicorn pandas openpyxl
 ```
 
-## ▶️ Executando o Projeto
+### ▶️ Executando o Projeto
 ```bash
-uvicorn main:app --reload
+uvicorn src.api.main:app --reload
 ```
-Após iniciar, a API estará disponível em:
+---
+
+## 🌐 Acessos da Aplicação
 ```bash
-http://localhost:<porta>
+API: http://127.0.0.1:8000
+Documentação Swagger: http://127.0.0.1:8000/docs
 ```
+---
+
+## 🧾 Logs da Aplicação
+
+Logs gravados em: 
+```bash
+src/api/app.log
+```
+Níveis de log utilizados:
+INFO: fluxo normal da aplicação
+ERROR: erros de validação ou processamento
 
 ---
 
-## 📊 Relatórios Analíticos
+## 📌 Observações
 
-Os relatórios gerados pela API incluem:
-
-- Total de registros processados
-- Métricas estatísticas básicas:
-  - Soma
-  - Média
-  - Valor mínimo
-  - Valor máximo
-- Metadados do processamento
-- Versão do algoritmo utilizado
-
-Todos os relatórios são **versionados**, garantindo rastreabilidade e consistência dos resultados ao longo do tempo.
-
----
-
-## 📖 Documentação da API
-
-A documentação completa dos endpoints está disponível em:
-
-/docs
-
----
-
-A API segue o padrão **Swagger/OpenAPI**, contendo:
-
-- Lista de endpoints disponíveis
-- Parâmetros de entrada
-- Exemplos de requisições e respostas
-
----
-
-## 🪵 Logs
-
-A aplicação registra automaticamente:
-
-- Eventos importantes do sistema
-- Erros de validação de dados
-- Falhas durante o processamento
-
-Os arquivos de log ficam disponíveis no diretório:
-
-/logs
-
----
-
-
-## ✅ Boas Práticas Adotadas
-
-- Validação de dados antes de qualquer cálculo
-- Separação clara de responsabilidades
-- Versionamento de artefatos gerados
-- Documentação contínua do projeto
-- Código organizado, legível e escalável
+- Os arquivos enviados são processados em diretórios temporários
+- O sistema valida colunas obrigatórias e tipos de dados
+- Arquivos temporários são removidos automaticamente após o processamento
 
 ---
 
