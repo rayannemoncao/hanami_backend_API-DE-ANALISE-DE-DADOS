@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, HTTPException, Request
-from src.api.routes import analytics, products
+from src.api.routes import analytics, products, demography, reports
 import os
 import pandas as pd
 import logging 
@@ -151,3 +151,9 @@ async def upload_arquivo(file: UploadFile):
 # Inclui os routers
 app.include_router(analytics.router)
 app.include_router(products.router)
+app.include_router(demography.router)
+app.include_router(reports.router)
+
+for route in app.routes:
+    logging.info(f"Rota carregada: {route.path} - métodos: {route.methods}")
+    print(f"Rota carregada: {route.path} - métodos: {route.methods}")
