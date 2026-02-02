@@ -25,13 +25,13 @@ Desenvolver uma **API robusta** capaz de:
 
 ## 🛠️ Tecnologias Utilizadas
 
-> Ajuste conforme o stack escolhido
-
-- Linguagem: `Python `
-- Framework de API: `FastAPI `
-- Documentação: `Swagger / OpenAPI`
-- Controle de versão: `Git`
-- Formatos suportados: `CSV`, `XLSX`
+- **Linguagem:** Python  
+- **Framework da API:** FastAPI  
+- **Documentação:** Swagger / OpenAPI  
+- **Análise de dados:** Pandas  
+- **Geração de relatórios:** ReportLab  
+- **Controle de versão:** Git  
+- **Formatos suportados:** CSV, XLSX  
 
 ---
 
@@ -40,23 +40,26 @@ Desenvolver uma **API robusta** capaz de:
 ```text
 .
 HANAMI/
-├── docs/                  # Documentação do projeto
-├── logs/                  # Logs da aplicação
+├── docs/                     # Documentação do projeto
+├── logs/                     # Logs da aplicação
 ├── src/
 │   ├── api/
-│   │   ├── main.py        # Ponto de entrada da API
-│   │   ├── data_reader.py # Leitura e validação de arquivos
-│   │   └── app.log        # Log da aplicação
-│   ├── models/            # Modelos de dados
-│   ├── parsers/           # Parsers e transformações
-│   ├── services/          # Regras de negócio
-│   └── utils/             # Funções utilitárias
-├── tests/
-│   ├── test_data_reader.py
-│   └── vendas_ficticias_10000_linhas.csv
-├── venv/                  # Ambiente virtual
+│   │   ├── routes/           # Endpoints da API
+│   │   │   ├── upload.py
+│   │   │   ├── analytics.py
+│   │   │   ├── products.py
+│   │   │   ├── demography.py
+│   │   │   └── reports.py
+│   │   └── main.py           # Ponto de entrada da aplicação
+│   ├── services/             # Regras de negócio e cálculos
+│   ├── parsers/              # Tratamento e transformação de dados
+│   ├── runtime_data/         # Arquivos processados em tempo de execução
+│   └── utils/                # Funções utilitárias
+├── tests/                    # Testes automatizados
+├── venv/                     # Ambiente virtual
 ├── .gitignore
 └── README.md
+
 
 ```
 ---
@@ -64,13 +67,41 @@ HANAMI/
 ## 📤 Upload de Arquivos
 
 A API aceita arquivos nos formatos:
+
 - `.csv`
 - `.xlsx`
 
-Os arquivos passam por:
-- Validação de tipo e tamanho
-- Padronização de dados
-- Registro de logs
+Os arquivos passam pelas seguintes etapas:
+
+- Validação do tipo de arquivo
+- Armazenamento temporário
+- Preparação para análise
+- Registro de logs de processamento
+
+---
+
+## 📊 Analytics
+
+O módulo de **Analytics** realiza cálculos automáticos a partir do **arquivo mais recente processado**, incluindo:
+
+- Receita bruta
+- Receita líquida
+- Lucro bruto
+- Total de vendas
+- Ticket médio
+
+Os resultados são retornados em formato **JSON** por meio de um endpoint dedicado.
+
+---
+
+## 📑 Relatórios
+
+A API permite a geração de **relatórios analíticos** nos formatos:
+
+- **JSON**
+- **PDF**
+
+Os relatórios consolidam os dados processados e as métricas calculadas.
 
 ---
 
@@ -107,7 +138,7 @@ source venv/bin/activate
 
 ### 4️⃣ Instalar dependências
 ```bash
-pip install fastapi uvicorn pandas openpyxl
+pip install fastapi uvicorn pandas openpyxl reportlab
 ```
 
 ### ▶️ Executando o Projeto
