@@ -3,7 +3,26 @@ import os
 
 router = APIRouter(prefix="/upload", tags=["Upload"])
 
-@router.post("/")
+@router.post("/",
+    summary="Upload de arquivo",
+    description="Recebe um arquivo CSV ou XLSX e armazena para processamento posterior.",
+    responses={
+        200: {
+            "description": "Upload realizado com sucesso",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "status": "sucesso",
+                        "arquivo": "dados.csv"
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Arquivo inválido ou ausente"
+        }
+    })
+
 async def upload_arquivo(file: UploadFile):
     if not file.filename:
         raise HTTPException(status_code=400, detail="Arquivo não enviado.")

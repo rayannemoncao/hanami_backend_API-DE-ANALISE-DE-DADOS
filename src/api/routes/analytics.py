@@ -8,7 +8,42 @@ os.makedirs(RUNTIME_DIR, exist_ok=True)
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
-@router.get("/")
+@router.get( "/",
+    summary="Obter métricas analíticas",
+    description=(
+        "Calcula métricas financeiras e de vendas a partir do arquivo "
+        "mais recente (CSV ou Excel) presente no diretório de dados processados."
+    ),
+    response_model=dict,
+    responses={
+        200: {
+            "description": "Métricas analíticas calculadas com sucesso",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "financial_metrics": {
+                            "receita_bruta": 150000.0,
+                            "receita_liquida": 135000.0,
+                            "lucro_bruto": 45000.0
+                        },
+                        "sales_metrics": {
+                            "total_vendas": 320,
+                            "ticket_medio": 421.87
+                        }
+                    }
+                }
+            }
+        },
+        404: {
+            "description": "Nenhum arquivo de dados encontrado"
+        },
+        415: {
+            "description": "Tipo de arquivo não suportado"
+        },
+        500: {
+            "description": "Erro interno ao processar os dados"
+        }
+    })
 def dados_analiticos() -> dict:
     try:
         #lista os arquivo na pasta RUNTIME_DIR

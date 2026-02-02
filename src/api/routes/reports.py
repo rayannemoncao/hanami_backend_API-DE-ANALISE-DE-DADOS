@@ -9,8 +9,17 @@ from src.services.report_generator import (
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
-@router.get("/download")
-def download_report(format: str = Query(..., description="json ou pdf")):
+@router.get(    "/download",
+    summary="Download de relatório",
+    description="""
+    Gera e retorna um relatório consolidado.
+
+    Formatos disponíveis:
+    - json
+    - pdf
+    """)
+def download_report(format: str = Query(...,description="Formato do relatório",
+        enum=["json", "pdf"])):
     format = format.lower()
 
     if format == "json":

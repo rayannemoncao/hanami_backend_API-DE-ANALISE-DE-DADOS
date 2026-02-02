@@ -8,7 +8,9 @@ os.makedirs(RUNTIME_DIR, exist_ok=True)
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
-@router.get("/")
+@router.get("/products",
+    summary="Análise de produtos",
+    description="Lista produtos vendidos com opção de ordenação.")
 def dados_dos_produtos(
     sort_by: str = Query(None, description= "Campo para ordenação: nome_produto, quantidade_vendida ou total_arrecadado"),
     ascending: bool = Query(False, description= "Ordenação crescente (True) ou decrescente (False)")
